@@ -8,7 +8,7 @@ function uploadWorld() {
 	archive = archiver('zip');
 	archive.on('error', err => {throw err;});
 	archive.pipe(output);
-	archive.directory('world', '');
+	archive.directory('world','world_nether','world_the_end','plugins');
 	archive.finalize();
 }
 
