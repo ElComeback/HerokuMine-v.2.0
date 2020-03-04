@@ -4,46 +4,46 @@
 start_tunnel(){
 	while true
 	do
-		echo -n "Starting ngrok... "
+		echo -n "Iniciando Ngrok... "
 		bin/ngrok tcp -authtoken $NGROK_API_TOKEN -log stdout --log-level debug ${mc_port} &> ngrok.log
-		echo -n "ngrok failed, retrying after 10 seconds "
+		echo -n "Fallido, reintentando en 10 segundos... "
 		sleep 10
 	done
 }
 
 graceful_shutdown(){
-	echo "KILLING $1 and $2"
+	echo "Terminando $1 and $2"
 	kill $1 $2 
 	wait $1
 	node last_sync.js
 	exit 0
 }
 
-echo 'sleeping 30s to wait for previous instance to terminate'
+echo 'Esperando 30 segundos para terminar la instancia'
 sleep 30
-echo 'starting deployment'
+echo 'Iniciando Despliegue'
 
 mc_port=25565
 
 
 if [ -z "$NGROK_API_TOKEN" ]; then
-  echo "You must set the NGROK_API_TOKEN config var to create a TCP tunnel!"
+  echo "Necesitas definir el valor NGROK_API_TOKEN para crear el tunel TCP!"
   exit 2
 fi
 
 if [ -z "$DROPBOX_API_TOKEN" ]; then
-  echo "You must set the DROPBOX_API_TOKEN config var to sync with dropbox!"
+  echo "Necesitar definir el valor DROPBOX_API_TOKEN para sincronizar a Dropbox!"
   exit 3
 fi
 
-# starts ngrok tunnel
+# Inicia tunel Ngrok
 start_tunnel &
 ngrok_pid=$!
 
-# downloads the world
+# Descarga el mundo
 node init.js
 
-# create server config
+# Crea la configuración del server
 if [ ! -f server.properties ]; then
   echo "server-port=${mc_port}" >> server.properties
 fi
@@ -54,22 +54,22 @@ touch ops.json
 
 heap=${HEAP:-"1024M"}
 
-echo "Starting: minecraft ${mc_port}"
+echo "Iniciando: minecraft ${mc_port}"
 java -Xmx${heap} -Xms${heap} -Xss512k -XX:+UseCompressedOops -jar server.jar nogui &
 java_pid=$!
 
 # trap "kill $ngrok_pid $java_pid" SIGTERM
 trap "graceful_shutdown $java_pid $ngrok_pid" SIGTERM
 
-# start syncing
+# Inicia Sincronizacion
 node sync_world.js &
 
-# start listening on $PORT
+# Inicia escucha en puerto: $PORT
 node index.js &
 
-# curl the server every 25 min so it doesn't sleep
+# Curl el server cada 25 minutos para evitar su suspensión
 while true
 do
-	curl --silent 'http://cs-mc-server.herokuapp.com/' &> /dev/null
+	curl --silent 'http://kodiplaza.herokuapp.com/' &> /dev/null
 	sleep 1500
 done
