@@ -52,6 +52,7 @@ touch banned-players.json
 touch banned-ips.json
 touch ops.json
 
+#Maximo de Memoria configurable
 heap=${HEAP:-"1G"}
 
 echo "Iniciando: minecraft ${mc_port}"
