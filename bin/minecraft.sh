@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# opens ngrok and see if it fails, when it does try again after 10 seconds
+# Abre Ngrok y si falla, reintenta en 10 segundos...
 start_tunnel(){
 	while true
 	do
