@@ -71,6 +71,6 @@ node index.js &
 # Curl el server cada 25 minutos para evitar su suspensión
 while true
 do
-	curl --silent 'http://kodiplaza.herokuapp.com/' &> /dev/null
+	curl --silent 'http://herokucraft.herokuapp.com/' &> /dev/null
 	sleep 1500
 done
